@@ -29,8 +29,12 @@ def rule_express(**kw):
       pass
 
 def rule_similar(**kw):
-
+   pass
 
 
 
 def ruleJug(**kw):
+   pass
+
+if __name__ == '__main__':
+   main()
