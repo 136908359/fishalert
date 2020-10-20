@@ -1,0 +1,10 @@
+
+def setMsgData(**kw):
+    #kw包含所有参数
+
+def type_basic(**kw):
+    #如果变量含有sendway等信息，则根据sentway报警，否则根据level来
+    #立即告警
+
+def type_
+
