@@ -5,12 +5,17 @@ class Config(object):
     listenPort = 5000
     listenHost = '0.0.0.0'
 
-    #连接数据库
-    host = '192.168.4.103'
-    port = 21410
-    user = 'bptest'
-    password = 'bptest'
-    database = 'fishalert'
+    #连接mysql
+    mysql_host = '192.168.4.103'
+    mysql_port = 21410
+    mysql_user = 'bptest'
+    mysql_password = 'bptest'
+    mysql_database = 'fishalert'
+
+    #连接mongodb
+    mongo_host = '192.168.0.102'
+    mongo_port = 27017
+
 
     #默认告警模板与媒介
     sendway = 'wechat'

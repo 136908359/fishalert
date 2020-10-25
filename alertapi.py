@@ -37,6 +37,15 @@ class alertData(Resource):
         fidb.Insert(SQL)
 
         return data
+    
+    
+#接收告警消息prometheus
+class promeData(Resource):
+    #@pysnooper.snoop()
+    def post(self):
+        data = parser.parse_args()
+        print(data)
+        return data
 
 class login(Resource):
     def get(self):

@@ -2,45 +2,42 @@ from flask import Flask
 from flask import request
 from flask import render_template
 from flask_restful import Api,Resource,reqparse
-from alertapi import alertData,login
+from alertapi import alertData,login,promeData
 from multiprocessing import Process,Manager
 import db,alert,Config
-import time
-import sys
+import time,sys
+from datahandle import intoMongo 
+from fishconfig import fishConfig
 
+app = Flask(__name__)
 config = Config.Config()
-fidb = db.fiDB()
 
-def fishProcess(aq):
+@app.route('/promeData', methods=['POST', 'GET'])
+def promeData():
+    data = request.data
+    result = intoMongo(data)
+    
+    if result:
+        return 'Insert success'
+    else:
+        return 'Insert failure'
 
-    app = Flask(__name__)
-
-    api = Api(app)
-    api.add_resource(alertData, '/alertdata')
-    api.add_resource(login, '/login')
-
+def fishProcess(aq):    
     app.run(host=config.listenHost, port=config.listenPort)
 
 def cookProcess(aq):
     pass
 
 def eatProcess():
-
-
-    SQL = 'select * from alertmsg where status=0;'
-    while True:
-        data = fidb.Select(SQL)
-        for index, item in enumerate(data):
-            alert.alertRules(item)
-        time.sleep(3)
+    pass
 
 def main():
 
     pfish = Process(target=fishProcess, args=(aq,))
-    cfish = Process(target=cookProcess, args=(aq,))
+    #cfish = Process(target=cookProcess, args=(aq,))
     efish = Process(target=eatProcess, args=())
     pfish.start()
-    cfish.start()
+    #cfish.start()
     efish.start()
     pfish.join()
 
