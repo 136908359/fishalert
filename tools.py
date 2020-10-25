@@ -168,7 +168,7 @@ class DingtalkChatbot(object):
                 logging.debug('发送结果：%s' % result)
                 if result['errcode']:
                     error_data = {"msgtype": "text", "text": {"content": "钉钉机器人消息发送失败，原因：%s" % result['errmsg']},
-                                  "at": {"isAtAll": True}}
+                                    "at": {"isAtAll": True}}
                     logging.error("消息发送失败，自动通知：%s" % error_data)
                     requests.post(self.webhook, headers=self.headers, data=json.dumps(error_data))
                 return result
@@ -220,4 +220,4 @@ class WechatCharbot(object):
             return False
 
 if __name__ == '__main__':
-   main()
+    main()
