@@ -25,8 +25,10 @@ def intoMongo(data):
             di.pop('endsAt')
             di.pop('generatorURL')    
             
-            di['status'] = 0
-            di['alertAt'] = timeNow  
+            di['alertStatus'] = 0
+            di['alertAt'] = timeNow
+            
+            di['alertSource'] = 'prometheus' 
         
             dataList.append(di)
             fishconfig = fishConfig(**dataList)

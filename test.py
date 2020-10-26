@@ -127,7 +127,7 @@ def echo():
 if __name__ == '__main__': 
     app.run('0.0.0.0',8001)"""
 
-import json
+""" import json
 from ast import literal_eval
 msg1 = json.loads(msg1)
 msg1.update(msg1['annotations'])
@@ -136,4 +136,22 @@ msg1.pop('annotations')
 msg1.pop('labels')
 msg1.pop('startsAt')
 msg1.pop('endsAt')
-msg1.pop('generatorURL')
+msg1.pop('generatorURL') """
+
+
+
+
+template = '告警主题: {alertname}\n告警值: {value}\n告警类型: {alertType}\n告警时间: {alertAt}\n告警来源: {alertSource}'
+
+d = {'alertname': 'usage_90','alertType': ['pod','node'],'alertAt': '2020-10-26','alertSource':'prometheus'}
+
+import re
+for vari in re.findall('{(\S+)}', template):
+    print(type(vari),d['alertname. '])
+    print(template.format(vari=d['\''+vari+'\'']))
+    
+
+
+
+
+
