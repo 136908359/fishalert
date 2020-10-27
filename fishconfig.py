@@ -10,20 +10,21 @@
 import re,datetime
 from exception import ruleError
 from db import fiMongo
-import logging,traceback,sys
+from alert import alertSent
+import logging,traceback,sys,pysnooper
 
 class fishConfig(object):
     
     file = 'fishalert.conf'
 
-    def __init__(self, **msgDict):
+    def __init__(self, msgDict):
         self.msgDict = msgDict
         self.alertname = msgDict['alertname'].strip()
         configDict = fishConfig.init(self)
         self.flag = True if self.alertname  in configDict else False        #alertname是否存在规则的标记
-        self.conditions = configDict[self.alertname]['conditions']
-        self.assignments = configDict[self.alertname]['assignments']
-        self.functions = configDict[self.alertname]['functions']
+        self.conditions = configDict.get(self.alertname)['conditions'] if configDict.get(self.alertname) else []
+        self.assignments = configDict.get(self.alertname)['assignments'] if configDict.get(self.alertname) else []
+        self.functions = configDict.get(self.alertname)['functions'] if configDict.get(self.alertname) else []
 
     #初始化fishalert告警规则配置文件，返回解析后的配置文件字典
     def init(self):
@@ -47,7 +48,7 @@ class fishConfig(object):
                     else:
                         raise ruleError(expr)
                 
-                    assignments = { key:value.strip().split(',') for key,value in tempList }
+                    assignments = { key.strip():value.strip().split(',') for key,value in tempList }
                     tempDict = dict()                   
                     tempDict['conditions'] = conditions         #匹配
                     tempDict['assignments'] = assignments       #赋值
@@ -58,27 +59,30 @@ class fishConfig(object):
 
     def match(self):
         objExp = ' and '.join(self.conditions)
-        for expr in self.conditions:
-            for key in re.findall('{(.*?)}', expr):
-                objExp = re.sub(r'{%s}' % key, key, objExp)
-                if key in self.msgDict:
-                    locals()[key] = self.msgDict[key]
-        return eval(objExp)
-
+        objExp =objExp.format(**self.msgDict)
+#        for expr in self.conditions:
+#            for key in re.findall('{(.*?)}', expr):
+#                objExp = re.sub(r'{%s}' % key, key, objExp)
+#                if key in self.msgDict:
+#                    locals()[key] = self.msgDict[key]
+        return eval(objExp) if objExp else True
+    
     def assign(self):
-        self.msgDict.update(self.assignments)
+        self.assignments.update(self.msgDict)
+        self.msgDict = self.assignments                  #fishalert中的rules定义的label加入msgDict，且不覆盖msgDict原本的key
         return self.msgDict
-        
+    
+    #计算表达式的真假
     def calculate(self):        
         express = ' and '.join(self.functions)
         for vari in set(re.findall('\w+(?=\()',express)):
-            express = express.replace(vari, 'self.' + vari)
-        return eval(express)
+            express = express.replace(vari, 'self.' + vari)   
+        return eval(express) if express else True
 
     #统计周期内符合查询条件的记录数量，时间单位：秒
     def count(self, seconds):
         queryDict = dict()        
-        queryDict['status'] = 0
+        queryDict['alertStatus'] = 0
         queryDict['alertname'] = self.alertname
         
         if 'distinct' in fishConfig.assign(self):
@@ -108,7 +112,7 @@ class fishConfig(object):
     
     #告警收敛，根据告警级别
     def notexists(self, queryDict):
-        queryDict['status'] = 0 
+        queryDict['alertStatus'] = 0 
         
         if 'distinct' in fishConfig.assign(self):
             distincts = fishConfig.assign(self)['distinct']        
@@ -123,16 +127,14 @@ class fishConfig(object):
         mongo = fimongo.conn()
         
         count = mongo.alertmsg.count_documents(queryDict)
-        if count == 0:
-            return True
-        else:
-            return False
+
+        return True if count == 0  else False
         
     def work(self):
         if self.flag:
             if self.match() and self.calculate():
                 msgDict = self.assign()
-                alertSent(**msgDict)
+                alertSent(msgDict)
             
             
         

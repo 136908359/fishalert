@@ -20,4 +20,5 @@ class Config(object):
     #默认告警模板与媒介
     sendway = 'wechat'
     sentto = 'nat.zhu'
-    template = '主题: {{alertname}}\n告警值: {{value}}\n告警规则: {{rule}}\n告警时间: {{alerttime}}\n告警来源: {{source}}'
+    template = '告警主题: {{alertname}}\n告警值: {{value}}\n告警类型: {{alertType}}\n告警时间: {{alertAt}}\n告警来源: {{alertSource}}'
+    prometheus_template = '告警主题: {{alertname}}\n告警值: {{value}}\n告警类型: {{alertType}}\n告警时间: {{alertAt}}\n告警来源: {{alertSource}}'
