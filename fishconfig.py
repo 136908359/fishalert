@@ -10,7 +10,7 @@
 import re,datetime
 from exception import ruleError
 from db import fiMongo
-from alert import alertSent
+from alert import alertsend
 import logging,traceback,sys,pysnooper
 
 class fishConfig(object):
