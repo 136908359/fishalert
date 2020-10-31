@@ -14,9 +14,9 @@ config = Config.Config()
 class WechatCharbot(object):
 
     def __init__(self):
-        self.CropID = 'ww68d301f8c4911662'
-        self.Secret = 'YlZbgV_sGsD3a3jPDfM3S-LC12qcYWneHse1bhNkLY8'
-        self.AppID = 1000002
+        self.CropID = config.cropidWechat
+        self.Secret = config.secretWechat
+        self.AppID = config.appidWechat
 
     def sendto(self, users, Msg):
         # defaultencoding = 'utf-8'
