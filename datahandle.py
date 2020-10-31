@@ -8,7 +8,7 @@ fiMongo = fiMongo()
 mongo = fiMongo.conn()
 
 
-#@pysnooper.snoop()
+@pysnooper.snoop()
 def intoMongo(data):
     dataList = list()
     timeNow = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')

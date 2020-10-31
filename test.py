@@ -150,7 +150,7 @@ d = {'alertname': 'usage_90','alertType': ['pod','node'],'alertAt': '2020-10-26'
 
 msg={'description': 'kubernetes集群内deployment-nas-1-7b9458674f-7wwtt内存使用率超过80%(当前值: +Inf)', 'summary': '内存使用率', 'alertname': 'PodMemoryUsage_70', 'instance': 'bluek8s11100node', 'job': 'kubernetes-cadvisor', 'level': '1', 'namespace': 'id-prod-bluepay', 'pod': 'deployment-nas-1-7b9458674f-7wwtt', 'type': 'pod', 'alertStatus': 0, 'alertAt': '2020-10-28 00:30:28', 'alertSource': 'prometheus', 'distinct': ['pod'], 'lebel': ['test']}
 msg1={'alertname': 'PodMemoryUsage_70','value':90,'lable':'test','alertAt':'2020-09-19 12:23:23'}
-print(msg)
+#print(msg)
     
 
 sorts=['alertname','value',]
@@ -159,6 +159,6 @@ content=str()
 for key,value in msg1.items():
     content=content + key + ':' + str(value) + '\n'
     
-print(content)
+#print(content)
 
 

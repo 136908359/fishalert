@@ -1,6 +1,8 @@
 
-from tools import WechatCharbot,DingtalkChatbot
+from tools.wechat import WechatCharbot
+from tools.dingtalk import DingtalkChatbot
 import Config
+import pysnooper
 
 config = Config.Config()
 
@@ -54,7 +56,7 @@ def alertMethod(msgDict):
             at_mobiles =  list(msgDict['atDingtalk'])
             dingtalk.sendto(content, at_mobiles)
             
-
+@pysnooper.snoop()
 def alertsend(msgDict):
     if 'alertSource' in msgDict and msgDict['alertSource'] == 'prometheus':
         alertMethod(msgDict)

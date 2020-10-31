@@ -129,12 +129,13 @@ class fishConfig(object):
         count = mongo.alertmsg.count_documents(queryDict)
 
         return True if count == 0  else False
-        
+    
+    @pysnooper.snoop()   
     def work(self):
         if self.flag:
             if self.match() and self.calculate():
                 msgDict = self.assign()
-                alertSent(msgDict)
+                alertsend(msgDict)
             
             
         
@@ -147,9 +148,9 @@ class fishConfig(object):
 def main():        
     msgDict = {'alertname':'cpuUsage_80','namespace':'id-test','idc':'inet','node':'sz-k8s'}
 
-    fishconfig = fishConfig(**msgDict)
+    #fishconfig = fishConfig(**msgDict)
     #print(fishconfig.conditions)
-    print(fishconfig.calculate())
+    #print(fishconfig.calculate())
 
 
 
