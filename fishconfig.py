@@ -12,6 +12,8 @@ from exception import ruleError
 from db import fiMongo
 from alert import alertsend
 import logging,traceback,sys,pysnooper
+from tools.logging import logger
+
 
 class fishConfig(object):
     
@@ -103,6 +105,7 @@ class fishConfig(object):
         mongo = fimongo.conn()
 
         count = mongo.alertmsg.count_documents(queryDict)
+        logger.debug('Count: the count of conditions is ' + str(count) )
         return count
     
     #输出当前时间，仅小时
@@ -127,15 +130,19 @@ class fishConfig(object):
         mongo = fimongo.conn()
         
         count = mongo.alertmsg.count_documents(queryDict)
-
+        logger.debug('Notexists: the count of same message is ' + str(count))
         return True if count == 0  else False
     
-    @pysnooper.snoop()   
     def work(self):
         if self.flag:
             if self.match() and self.calculate():
+                logger.debug('Work: match success')
                 msgDict = self.assign()
                 alertsend(msgDict)
+            else:
+                logger.debug('Work: the message is not match the rule')
+        else:
+            logger.debug('Work: no rules match the message')
             
             
         

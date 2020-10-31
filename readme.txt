@@ -12,6 +12,7 @@ rules > alertMsg > 配置文件
 
 alertMsg关键key：
 alertname：告警的名称，唯一性标识，必带
+value: 告警的值，必带
 alertSource：告警的来源，选带
 sendWechat：微信告警发送的用户，多个用户以，间隔，选带
 sendMail：邮件告警发送的邮箱，多个邮箱以，间隔，选带

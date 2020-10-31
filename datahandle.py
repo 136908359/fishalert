@@ -3,12 +3,12 @@ import datetime
 from db import fiMongo
 import logging,pysnooper
 from fishconfig import fishConfig
+from tools.logging import logger
 
 fiMongo = fiMongo()
 mongo = fiMongo.conn()
 
 
-@pysnooper.snoop()
 def intoMongo(data):
     dataList = list()
     timeNow = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -31,21 +31,22 @@ def intoMongo(data):
             
             di['alertSource'] = 'prometheus' if 'alertSource' not in di else di['alertSource']
             
-
             dataList.append(di)
+            logger.debug('Data from prometheus, start to apply th rules, dataList is ' + str(dataList))      
             fishconfig = fishConfig(di)
             fishconfig.work()  
         
             
     elif isinstance(dataFormat, dict):
         if 'alertname' not in dataFormat:
-            logging.warning('Alertname is none: {dataFormat}'.format(str(dataFormat)))
+            logger.warning('Alertname is none: {dataFormat}'.format(str(dataFormat)))
             return False
         
         dataFormat['alertStatus'] = 0
         dataFormat['alertAt'] = timeNow
         dataFormat['alertSource'] = 'sourceip' if 'alertSource' not in dataFormat else dataFormat['alertSource']
         
+        logger.debug('Data from dict, start to apply th rules, dataList is ' + str(dataList))      
         dataList.append(dataFormat)
         #fishconfig = fishConfig(dataFormat)
         #fishconfig.work()
@@ -56,9 +57,10 @@ def intoMongo(data):
     
     result = mongo.alertmsg.insert_many(dataList).inserted_ids
     if isinstance(result, list):
-        logging.debug('Insert success: {dataList}'.format(dataList = str(dataList)))
+        logger.debug('Insert success: {dataList}'.format(dataList = str(dataList)))
         return True
     else:
+        logger.debug('Insert fail: {dataList}'.format(dataList = str(dataList)))
         return False
     
     

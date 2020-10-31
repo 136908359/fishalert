@@ -8,6 +8,8 @@ import db,alert,Config
 import time,sys
 from datahandle import intoMongo 
 from fishconfig import fishConfig
+from tools.logging import logger
+
 
 app = Flask(__name__)
 config = Config.Config()
@@ -15,6 +17,7 @@ config = Config.Config()
 @app.route('/promeData', methods=['POST', 'GET'])
 def promeData():
     data = request.data
+    logger.debug('Accept the data' + str(data))
     result = intoMongo(data)
     
     if result:
