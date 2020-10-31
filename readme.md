@@ -5,7 +5,7 @@ fishalert
 fishalert接收到alertmsg（告警信息）后，会将告警信息存入mongodb，并且根据当前的告警信息和历史告警信息判断告警发送的与否与方式
 
 应用方式：
-启动fishalert后，用户需要将alertmsg以固定的形式发送给fishalert的接口，并且在rule配置中配置告警的发送逻辑、聚合方式、唯一性标志即可
+启动fishalert后，用户需要将alertmsg以固定的形式发送给fishalert接口，并且在rule配置中配置告警的发送逻辑、聚合方式、唯一性标志, fishalert会根据用户配置的规则发送告警
 
 配置优先级：
 rules > alertMsg > 配置文件
