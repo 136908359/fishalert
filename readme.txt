@@ -22,3 +22,16 @@ atDingtalk：钉钉告警需要at的对象号码，多个号码以，间隔，�
 sendPhone：语音告警发送的号码，多个号码以，间隔，选带
 template：自定义告警内容的模板，支持宏语法，选带
 
+
+接入方式：
+1）prometheus
+prometheus的配置文件块加入：
+alerting:
+      alertmanagers:
+      - static_configs:
+        - targets: ["{HOST}:{PORT}"]
+2）自定义告警
+自定义告警内容以POST的方式发送到http://{HOST}:{PORT}即可
+
+
+
