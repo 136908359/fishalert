@@ -18,7 +18,7 @@ sendWechat：微信告警发送的用户，多个用户以，间隔，选带
 sendMail：邮件告警发送的邮箱，多个邮箱以，间隔，选带
 sendDingtalk：钉钉告警发送的群组url，不支持多个，选带
 secretDingtalk，钉钉告警发送群组的secret，不支持多个，选带
-atDingtalk：钉钉告警需要at的对象号码，多个号码以，间隔，选带
+atDingtalk：钉钉告警需要@的对象号码，多个号码以，间隔，选带
 sendPhone：语音告警发送的号码，多个号码以，间隔，选带
 template：自定义告警内容的模板，支持宏语法，选带
 
@@ -41,7 +41,7 @@ alerting:
       - static_configs:
         - targets: ["{HOST}:{PORT}"]
 2）自定义告警
-自定义告警内容以POST的方式发送到http://{HOST}:{PORT}即可
+自定义告警内容以POST的方式发送到http://{HOST}:{PORT}即可,需要注意的是，自定义告警post的data需要json格式，且必须包含alertname、value键
 
 
 
