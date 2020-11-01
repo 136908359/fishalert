@@ -3,7 +3,7 @@ import datetime
 from db import fiMongo
 import logging,pysnooper
 from fishconfig import fishConfig
-from tools.logging import logger
+from tools.logger import logger
 
 fiMongo = fiMongo()
 mongo = fiMongo.conn()

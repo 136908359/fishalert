@@ -5,9 +5,6 @@ sys.path.append("..")
 import re,sys,json,time,logging
 import requests,urllib,hmac,base64,hashlib
 import queue
-import Config
-
-config = Config.Config()
 
 _ver = sys.version_info
 is_py3 = (_ver[0] == 3)

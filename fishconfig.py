@@ -8,16 +8,16 @@
 
 '''
 import re,datetime
-from exception import ruleError
+from tools.exception import ruleError
 from db import fiMongo
 from alert import alertsend
 import logging,traceback,sys,pysnooper
-from tools.logging import logger
+from tools.logger import logger
 
 
 class fishConfig(object):
     
-    file = 'fishalert.conf'
+    file = 'rules.conf'
 
     def __init__(self, msgDict):
         self.msgDict = msgDict

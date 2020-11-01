@@ -1,32 +1,18 @@
-from flask import Flask
-from flask import request
-from flask import render_template
-from flask_restful import Api,Resource,reqparse
-from alertapi import alertData,login,promeData
 from multiprocessing import Process,Manager
-import db,alert,Config
 import time,sys
-from datahandle import intoMongo 
+
 from fishconfig import fishConfig
-from tools.logging import logger
+from tools.logger import logger
+from tools.parser import dbParser,baseParser,alertParser
+
+from api import app
 
 
-app = Flask(__name__)
-config = Config.Config()
 
-@app.route('/promeData', methods=['POST', 'GET'])
-def promeData():
-    data = request.data
-    logger.debug('Accept the data' + str(data))
-    result = intoMongo(data)
-    
-    if result:
-        return 'Insert success'
-    else:
-        return 'Insert failure'
-
-def fishProcess(aq):    
-    app.run(host=config.listenHost, port=config.listenPort)
+def fishProcess(aq):
+    host = baseParser.get('listenHost', '0.0.0.0')
+    port = baseParser.getint('listenPort', 5000) 
+    app.run(host=host, port=port)
 
 def cookProcess(aq):
     pass

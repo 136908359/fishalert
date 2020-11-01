@@ -6,17 +6,16 @@ import pysnooper
 import sys, json, re
 import urllib.request as urllib2
 import urllib
-import Config
+from tools.parser import dbParser,baseParser,alertParser
 
-config = Config.Config()
 
 
 class WechatCharbot(object):
 
     def __init__(self):
-        self.CropID = config.cropidWechat
-        self.Secret = config.secretWechat
-        self.AppID = config.appidWechat
+        self.CropID = alertParser.get('cropidWechat')
+        self.Secret = alertParser.get('secretWechat')
+        self.AppID = alertParser.get('appidWechat')
 
     def sendto(self, users, Msg):
         # defaultencoding = 'utf-8'
@@ -55,6 +54,8 @@ class WechatCharbot(object):
             msg = 'Wechat message send to ' + users + ' send failure: ' + errmsg
             #logging.warnning(msg)
             return False
+def main():
+    pass
 
 if __name__ == '__main__':
     main()

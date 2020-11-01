@@ -1,19 +1,18 @@
 
 from tools.wechat import WechatCharbot
 from tools.dingtalk import DingtalkChatbot
-import Config
 import pysnooper
-from tools.logging import logger
+from tools.logger import logger
 import copy
+from tools.parser import dbParser,baseParser,alertParser
 
-config = Config.Config()
 
 def alertContent(msgDict):
     if 'alertTemplate' in msgDict:
         content = msgDict['alertTemplate'].format(**msgDict)
-    elif msgDict.get('alertSource') == 'prometheus' and 'prometheus_template' in dir(config):
-        content = config.prometheus_template.format(**msgDict)
-    elif msgDict.get('alertSource') == 'prometheus' and 'prometheus_template' not in dir(config):
+    elif msgDict.get('alertSource') == 'prometheus' and 'prometheus_template' in alertParser:
+        content = alertParser.get('prometheus_template').format(**msgDict)
+    elif msgDict.get('alertSource') == 'prometheus' and 'prometheus_template' not in alertParser:
         msgDict.pop('alertStatus')
         msgDict.pop('distinct')
         
@@ -30,8 +29,8 @@ def alertContent(msgDict):
             if key != 'alertname':
                 content = content + '\n' + key + ': ' + str(value)
             
-    elif 'template' in dir(config):
-        content = config.template.format(**msgDict)
+    elif 'template' in alertParser:
+        content = alertParser.get('template').format(**msgDict)
     else:
         content = 'alertname: ' + msgDict['alertname'] + '\n'
         content = content + '\n' + 'value: ' + msgDict['value']
@@ -45,16 +44,16 @@ def alertContent(msgDict):
 
 def alertMethod(msgDict):
     
-        if 'sendWechat' not in msgDict and config.sendWechat:
-            msgDict['sendWechat'] = config.sendWechat
-        if 'sendPhone' not in msgDict and config.sendPhone:
-            msgDict['sendPhone'] = config.sendPhone
-        if 'sendMail' not in msgDict and config.sendMail:
-            msgDict['sendMail'] = config.sendMail
-        if 'sendDingtalk' not in msgDict and config.sendDingtalk:
-            msgDict['sendDingtalk'] = config.sendDingtalk
-            msgDict['atDingtalk'] = config.atDingtalk
-            msgDict['secretDingtalk'] = config.secretDingtalk
+        if 'sendWechat' not in msgDict and 'sendWechat' in alertParser:
+            msgDict['sendWechat'] = alertParser.get('sendWechat')
+        if 'sendPhone' not in msgDict and 'sendPhone' in alertParser:
+            msgDict['sendPhone'] = alertParser.get('sendPhone')
+        if 'sendMail' not in msgDict and 'sendMail' in alertParser:
+            msgDict['sendMail'] = alertParser.get('sendMail')
+        if 'sendDingtalk' not in msgDict and 'sendDingtalk' in alertParser:
+            msgDict['sendDingtalk'] = alertParser.get('sendDingtalk')
+            msgDict['atDingtalk'] = alertParser.get('atDingtalk')
+            msgDict['secretDingtalk'] = alertParser.get('secretDingtalk')
             
         content = alertContent(msgDict)
         

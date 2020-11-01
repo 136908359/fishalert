@@ -40,11 +40,8 @@ msg1='''
     }
 '''
 
+from tools.parser import dbParser,baseParser,alertParser
 
-    
-import logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(filename)s[%(module)s,%(lineno)d] %(levelname)s "%(message)s"', datefmt='%Y-%m-%d %H:%M:%S', filemode='a')
+print(dbParser.getint('mysqlPort12'))
 
 
-logger = logging
-#loger().warning('warning message')

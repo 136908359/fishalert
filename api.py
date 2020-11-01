@@ -1,11 +1,16 @@
 from flask_restful import Api,Resource,reqparse
 import pysnooper,time,json,socket
-import db,Config
-import test
+from tools.logger import logger
+
+from flask import Flask
+from flask import request
+from flask import render_template
+from flask_restful import Api,Resource,reqparse
+
+from datahandle import intoMongo 
 
 parser = reqparse.RequestParser()
-fidb = db.fiDB()
-config = Config.Config()
+app = Flask(__name__)
 
 
 def isJson(data):
@@ -16,6 +21,19 @@ def isJson(data):
     else:
         # logging.error('')
         raise data + ': type is not dict'
+
+#接收prometheus的告警
+@app.route('/promeData', methods=['POST', 'GET'])
+def promeData():
+    data = request.data
+    logger.debug('Accept the data' + str(data))
+    result = intoMongo(data)
+    
+    if result:
+        return 'Insert success'
+    else:
+        return 'Insert failure'
+
 
 #接收告警消息
 class alertData(Resource):

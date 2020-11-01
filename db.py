@@ -1,20 +1,17 @@
 import pymysql,pymongo
 import logging
 import sys,traceback,pysnooper
-import Config
-
-config = Config.Config()
+from tools.parser import dbParser,baseParser,alertParser
 
 class fiDB():
 
-    database = config.mysql_database
+    database = dbParser.get('mysqlDatabase','fish')
 
     def __init__(self):
-        self.host = config.mysql_host
-        self.port = config.mysql_port
-        self.user = config.mysql_user
-        self.password = config.mysql_password
-        #self.database = 'fishalert'
+        self.host = dbParser.get('mysqlHost','127.0.0.1')
+        self.port = dbParser.getint('mysqlPort', 3306)
+        self.user = dbParser.get('mysqlUser','fish')
+        self.password = dbParser.get('mysqlPassword')
 
     #连接数据库
     def conn(self):
@@ -131,9 +128,8 @@ class fiDB():
 class fiMongo(object):
 
     def __init__(self):
-        self.host = config.mongo_host
-        self.port = config.mongo_port
-
+        self.host = dbParser.get('mongoHost', '127.0.0.1')
+        self.port = dbParser.getint('mongoPort', 27017) 
     def conn(self):
         try:
             client = pymongo.MongoClient(host = self.host, port = self.port)
