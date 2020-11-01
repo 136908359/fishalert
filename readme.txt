@@ -32,6 +32,13 @@ setting.ini:基本配置
 3）支持>=、<=、==、!=逻辑判断符
 4）支持以key：value的形式增加或更新告警内容，其中有一些保留的健，如：distinct指定该{alertname}告警内容的聚合键，label给该{alertname}告警内容打上标签
 
+告警规则配置支持的函数：
+1)count
+count(300) > 3: 300s内该告警发生的次数
+2)hour
+hour() > 8 and hour() < 24: 该告警在当前时间为8时-24时内触发
+3) notexists
+notexists({'alertname':'cpuUsage_90'}): 在告警cpuUsage_90不存在时才会触发该告警
 
 接入方式：
 1）prometheus
