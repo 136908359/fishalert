@@ -1,30 +1,27 @@
-import pymysql
+import pymysql,pymongo
 import logging
 import sys,traceback,pysnooper
-import Config
-
-config = Config.Config()
+from tools.parser import dbParser,baseParser,alertParser
 
 class fiDB():
 
-    database = config.database
+    database = dbParser.get('mysqlDatabase','fish')
 
     def __init__(self):
-        self.host = config.host
-        self.port = config.port
-        self.user = config.user
-        self.password = config.password
-        #self.database = 'fishalert'
+        self.host = dbParser.get('mysqlHost','127.0.0.1')
+        self.port = dbParser.getint('mysqlPort', 3306)
+        self.user = dbParser.get('mysqlUser','fish')
+        self.password = dbParser.get('mysqlPassword')
 
     #连接数据库
     def conn(self):
         try:
             db = pymysql.connect(host=self.host,
-                             port=self.port,
-                             user=self.user,
-                             password=self.password,
-                             database=self.database,
-                             charset='utf8')
+                            port=self.port,
+                            user=self.user,
+                            password=self.password,
+                            database=self.database,
+                            charset='utf8')
         except pymysql.err.OperationalError as err:
             msg = self.host + ':' + str(self.port) + ',failed to connect database.'
             # logging.error(msg)
@@ -128,5 +125,23 @@ class fiDB():
             logging.debug(msg)
 
 
+class fiMongo(object):
+
+    def __init__(self):
+        self.host = dbParser.get('mongoHost', '127.0.0.1')
+        self.port = dbParser.getint('mongoPort', 27017) 
+    def conn(self):
+        try:
+            client = pymongo.MongoClient(host = self.host, port = self.port)
+        except:
+            msg = traceback.print_exc(limit=10, file=sys.stdout)
+            logging.error(msg)
+            return msg
+        else:
+            with client:
+                db = client.fish
+                return  db
+
+
 if __name__ == '__main__':
-   main()
+    main()

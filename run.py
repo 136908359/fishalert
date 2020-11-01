@@ -1,46 +1,32 @@
-from flask import Flask
-from flask import request
-from flask import render_template
-from flask_restful import Api,Resource,reqparse
-from alertapi import alertData,login
 from multiprocessing import Process,Manager
-import db,alert,Config
-import time
-import sys
+import time,sys
 
-config = Config.Config()
-fidb = db.fiDB()
+from fishconfig import fishConfig
+from tools.logger import logger
+from tools.parser import dbParser,baseParser,alertParser
+
+from api import app
+
+
 
 def fishProcess(aq):
-
-    app = Flask(__name__)
-
-    api = Api(app)
-    api.add_resource(alertData, '/alertdata')
-    api.add_resource(login, '/login')
-
-    app.run(host=config.listenHost, port=config.listenPort)
+    host = baseParser.get('listenHost', '0.0.0.0')
+    port = baseParser.getint('listenPort', 5000) 
+    app.run(host=host, port=port)
 
 def cookProcess(aq):
     pass
 
 def eatProcess():
-
-
-    SQL = 'select * from alertmsg where status=0;'
-    while True:
-        data = fidb.Select(SQL)
-        for index, item in enumerate(data):
-            alert.alertRules(item)
-        time.sleep(3)
+    pass
 
 def main():
 
     pfish = Process(target=fishProcess, args=(aq,))
-    cfish = Process(target=cookProcess, args=(aq,))
+    #cfish = Process(target=cookProcess, args=(aq,))
     efish = Process(target=eatProcess, args=())
     pfish.start()
-    cfish.start()
+    #cfish.start()
     efish.start()
     pfish.join()
 
