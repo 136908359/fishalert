@@ -22,6 +22,16 @@ atDingtalk：钉钉告警需要at的对象号码，多个号码以，间隔，�
 sendPhone：语音告警发送的号码，多个号码以，间隔，选带
 template：自定义告警内容的模板，支持宏语法，选带
 
+配置文件功能：
+rules.conf:告警规则配置
+setting.ini:基本配置
+
+告警规则配置支持的语法：
+1）一行为一条配置，每行必须包含{alertname}，表示该行为对来自告警名称为{alertname}告警的处理，每行包含多个配置段，以and连接
+2）支持宏变量，例如{alertname}，宏变量在程序处理后会解析为宏变量对应的值
+3）支持>=、<=、==、!=逻辑判断符
+4）支持以key：value的形式增加或更新告警内容，其中有一些保留的健，如：distinct指定该{alertname}告警内容的聚合键，label给该{alertname}告警内容打上标签
+
 
 接入方式：
 1）prometheus
