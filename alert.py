@@ -78,6 +78,8 @@ def alertMethod(msgDict):
 def alertsend(msgDict):
     if 'alertSource' in msgDict and msgDict['alertSource'] == 'prometheus':
         alertMethod(msgDict)
+    else:
+        alertMethod(msgDict)
 
     
     

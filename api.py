@@ -13,26 +13,38 @@ parser = reqparse.RequestParser()
 app = Flask(__name__)
 
 
-def isJson(data):
-    # print(type(data))
-    if isinstance(data, dict):
-        json_data = json.dumps(data)
-        return json_data
-    else:
-        # logging.error('')
-        raise data + ': type is not dict'
 
-#接收prometheus的告警
-@app.route('/promeData', methods=['POST', 'GET'])
+#接收prometheus的告警消息
+@app.route('/promeData', methods=['POST'])
 def promeData():
     data = request.data
-    logger.debug('Accept the data' + str(data))
-    result = intoMongo(data)
+    alertSource = request.remote_addr
     
+    result = intoMongo(data, source = alertSource) 
     if result:
         return 'Insert success'
     else:
         return 'Insert failure'
+
+#接收json格式的告警消息
+@app.route('/fishData', methods=['POST'])
+def fishData():
+    data = request.data
+    alertSource = request.remote_addr
+
+    try:
+        resDict = json.loads(data)
+    except:    
+        return 'Request object is not json format'
+    else:
+        if 'alertname' not in resDict or 'value' not in resDict:
+            return 'Request object does not contain  key alertname or value'
+        else:
+            result = intoMongo(data, source = alertSource)
+            if result:
+                return 'Insert success'
+            else:
+                return 'Insert failure'
 
 
 #接收告警消息
@@ -52,18 +64,11 @@ class alertData(Resource):
         variable = str(data['variable'])
 
         SQL = 'INSERT INTO alertmsg(alertname, value, source, variable) values (\'{}\', {}, \'{}\', \'{}\');'.format(alertname, value, source, variable)
-        fidb.Insert(SQL)
+        #fidb.Insert(SQL)
 
         return data
     
     
-#接收告警消息prometheus
-class promeData(Resource):
-    #@pysnooper.snoop()
-    def post(self):
-        data = parser.parse_args()
-        print(data)
-        return data
 
 class login(Resource):
     def get(self):

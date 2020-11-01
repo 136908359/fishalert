@@ -39,9 +39,11 @@ msg1='''
         "generatorURL":"http://prometheus-0:9090/graph?g0.expr=container_memory_rss%7Bcontainer%3D%22%22%2Cjob%3D%22kubernetes-cadvisor%22%2Cnamespace%3D%22id-prod-bluepay%22%7D+%2F+container_spec_memory_limit_bytes%7Bcontainer%3D%22%22%2Cjob%3D%22kubernetes-cadvisor%22%2Cnamespace%3D%22id-prod-bluepay%22%7D+%2A+100+%3E+80&g0.tab=1"
     }
 '''
-
-from tools.parser import dbParser,baseParser,alertParser
-
-print(dbParser.getint('mysqlPort12'))
+import json
 
 
+data = json.loads(testmsg)
+if "alertname" or 'id' not in data:
+    print('no')
+else:
+    print('yes')
