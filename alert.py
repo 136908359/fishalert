@@ -60,8 +60,8 @@ def alertMethod(msgDict):
         if 'sendWechat' in msgDict:
             wechat = WechatCharbot()
             user =  msgDict['sendWechat'].replace(',','|').strip('|')
-            logger.debug('AlertMethod: send to wechat: user is {}'.format(user))
-            wechat.sendto(user, content)
+            result = wechat.sendto(user, content)
+            return result
         
         if 'sendDingtalk' in msgDict:
             webhook = msgDict['sendDingtalk']
@@ -69,13 +69,13 @@ def alertMethod(msgDict):
             atDingtalk = msgDict['atDingtalk']
             dingtalk = DingtalkChatbot(webhook, secret=secret, pc_slide=True)
             atDingtalk =  list(msgDict['atDingtalk']) if 'atDingtalk' in msgDict else []
-            logger.debug('AlertMethod: send to dingtalk: webook is {},atDingtalk is {}'.format(webhook, atDingtalk))
-            dingtalk.sendto(content, atDingtalk)
+            result = dingtalk.sendto(content, atDingtalk)
+            return result
             
         if 'sendWechat' not in msgDict and 'sendDingtalk' not in msgDict and 'sendPhone' not in msgDict and 'sendMail' not in msgDict:
             logger.debug('AlertMethod: sendMethod is not match ')
 
-def alertsend(msgDict):
+def alertSend(msgDict):
     if 'alertSource' in msgDict and msgDict['alertSource'] == 'prometheus':
         alertMethod(msgDict)
     else:

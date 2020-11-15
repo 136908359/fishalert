@@ -58,5 +58,17 @@ def intoMongo(data, source):
         logger.debug('Insert fail: {dataList}'.format(dataList = str(dataList)))
         return False
     
-    
-    
+
+
+#发送告警后更新告警数据状态
+def updateStatus(updDict):
+    result = mongo.alertmsg.update_many(updDict)
+    count = result.modified_count
+    if count:
+        msg = f'update success, the update data is {count}'
+        logger.info(msg)    
+        return True
+    else:
+        msg = 'update failure'
+        logger.error(msg)
+        return False

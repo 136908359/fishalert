@@ -2,9 +2,10 @@ import sys
 sys.path.append("..")
 
 #dingtalk
-import re,sys,json,time,logging
+import re,sys,json,time
 import requests,urllib,hmac,base64,hashlib
 import queue
+from tools.logger import logger
 
 _ver = sys.version_info
 is_py3 = (_ver[0] == 3)
@@ -95,8 +96,8 @@ class DingtalkChatbot(object):
         if is_not_null_and_blank_str(msg):
             data["text"] = {"content": msg}
         else:
-            logging.error("text类型，消息内容不能为空！")
-            raise ValueError("text类型，消息内容不能为空！")
+            logger.error("Type text，the message content not null")
+            raise ValueError("Type text，the message content not null")
 
         if is_at_all:
             data["at"]["isAtAll"] = is_at_all
@@ -112,8 +113,16 @@ class DingtalkChatbot(object):
             at_dingtalk_ids = list(map(str, at_dingtalk_ids))
             data["at"]["atDingtalkIds"] = at_dingtalk_ids
 
-        logging.debug('text类型：%s' % data)
-        return self.post(data)
+        logger.debug('Type text：%s' % data)
+        result = self.post(data)
+        if result.get('errmsg') == 'ok':
+            msg = 'Dingtalk send success'
+            logger.debug(msg)
+            return True
+        else:
+            msg = 'Dingtalk send failure, the response is {result}'.format(result = result)
+            logger.error(msg)
+            return False
 
     def post(self, data):
         """
@@ -134,40 +143,41 @@ class DingtalkChatbot(object):
             elapse_time = now - self.queue.get()
             if elapse_time < 60:
                 sleep_time = int(60 - elapse_time) + 1
-                logging.debug('钉钉官方限制机器人每分钟最多发送20条，当前发送频率已达限制条件，休眠 {}s'.format(str(sleep_time)))
+                logger.debug('钉钉官方限制机器人每分钟最多发送20条，当前发送频率已达限制条件，休眠 {}s'.format(str(sleep_time)))
                 time.sleep(sleep_time)
 
         try:
             post_data = json.dumps(data)
             response = requests.post(self.webhook, headers=self.headers, data=post_data)
         except requests.exceptions.HTTPError as exc:
-            logging.error("消息发送失败， HTTP error: %d, reason: %s" % (exc.response.status_code, exc.response.reason))
+            logger.error("Send failure, HTTP error: %d, reason: %s" % (exc.response.status_code, exc.response.reason))
             raise
         except requests.exceptions.ConnectionError:
-            logging.error("消息发送失败，HTTP connection error!")
+            logger.error("Send failure, HTTP connection error!")
             raise
         except requests.exceptions.Timeout:
-            logging.error("消息发送失败，Timeout error!")
+            logger.error("Send failure, Timeout error!")
             raise
         except requests.exceptions.RequestException:
-            logging.error("消息发送失败, Request Exception!")
+            logger.error("Send failure, Request Exception!")
             raise
         else:
             try:
                 result = response.json()
             except JSONDecodeError:
-                logging.error("服务器响应异常，状态码：%s，响应内容：%s" % (response.status_code, response.text))
-                return {'errcode': 500, 'errmsg': '服务器响应异常'}
+                logger.error("Response exception，code:%s，content：%s" % (response.status_code, response.text))
+                return {'errcode': 500, 'errmsg': 'Response exception!'}
             else:
-                logging.debug('发送结果：%s' % result)
+                logger.debug('The response：%s' % result)
                 if result['errcode']:
-                    error_data = {"msgtype": "text", "text": {"content": "钉钉机器人消息发送失败，原因：%s" % result['errmsg']},
+                    error_data = {"msgtype": "text", "text": {"content": "Send failure, the reason is %s" % result['errmsg']},
                                     "at": {"isAtAll": True}}
-                    logging.error("消息发送失败，自动通知：%s" % error_data)
+                    logger.error("Send failure: %s" % error_data)
                     requests.post(self.webhook, headers=self.headers, data=json.dumps(error_data))
                 return result
 
-
+def main():
+    pass
 
 if __name__ == '__main__':
     main()

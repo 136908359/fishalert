@@ -7,6 +7,7 @@ import sys, json, re
 import urllib.request as urllib2
 import urllib
 from tools.parser import dbParser,baseParser,alertParser
+from tools.logger import logger
 
 
 
@@ -46,13 +47,13 @@ class WechatCharbot(object):
 
         errcode = result['errcode']
         if not errcode:
-            msg = 'Wechat message send to ' + users + ' success: ' + Msg
-            #logging.debug(msg)
+            msg = 'Wechat send success'
+            logger.debug(msg)
             return True
         else:
             errmsg = result['errmsg']
-            msg = 'Wechat message send to ' + users + ' send failure: ' + errmsg
-            #logging.warnning(msg)
+            msg = 'Wechat send failure, th response is {result}'.format(result=result)
+            logger.warnning(msg)
             return False
 def main():
     pass

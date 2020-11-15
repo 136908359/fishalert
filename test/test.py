@@ -39,11 +39,43 @@ msg1='''
         "generatorURL":"http://prometheus-0:9090/graph?g0.expr=container_memory_rss%7Bcontainer%3D%22%22%2Cjob%3D%22kubernetes-cadvisor%22%2Cnamespace%3D%22id-prod-bluepay%22%7D+%2F+container_spec_memory_limit_bytes%7Bcontainer%3D%22%22%2Cjob%3D%22kubernetes-cadvisor%22%2Cnamespace%3D%22id-prod-bluepay%22%7D+%2A+100+%3E+80&g0.tab=1"
     }
 '''
+from queue import Queue
+from threading import Thread
+import time
+
+def q1():
+    while True:
+        print('q1')
+        time.sleep(5)
+def q2():
+    while True:
+        print('q2')
+        time.sleep(60)
+
+queue = Queue(maxsize=10)
+#queue.put(testmsg)
+
+#print(queue.get(block=False,timeout=1))
+
+#timer5s = Thread(name='timer5s', target=q1)
+
+#timer60s = Thread(name='timer60s', target=q2)
+
+#timer5s.start()
+#print('Start thread timer5s')
+#timer60s.start()
+#print('Start thread timer60s') 
+
 import json
+print({key:value for key,value in json.loads(testmsg).items() if key in ['alertname','instance','job']})
 
+import datetime
+print(datetime.datetime.now())
+print((datetime.datetime.now()-datetime.timedelta(seconds=600)).strftime('%Y-%m-%d %H:%M:%S'))
 
-data = json.loads(testmsg)
-if "alertname" or 'id' not in data:
-    print('no')
-else:
-    print('yes')
+from db import fiMongo
+
+fiMongo = fiMongo()
+mongo = fiMongo.conn()
+for doc in mongo.alertmsg.find({'alertStatus': 0, 'alertAt': {'$gte': '2020-11-21 22:32:23' }}, projection={"_id":False}):
+    print('111')
